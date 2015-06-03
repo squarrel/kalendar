@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}
+	{{ title }}
+{% endblock %}
+
+{% block menu %}
+{% endblock %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+<p>{{ content }}</p>
+<br/>
+<table class='tabela-nalozi'>
+	<tr>
+		<th>Latest</th>
+	</tr>
+	<tr>
+		<th>Date</th>
+		<th>Title</th>
+	</tr>
+	{% for reservation in reservations %}
+	<tr>
+		<td>{{ reservation.date_created }}</td>
+		<td><a href="{% url 'reservations.views.reservation' reservation.id %}">{{ reservation.title }}</a></td>
+	</tr>
+	{% endfor %}
+</table>
+<br/>
+{% endblock %}

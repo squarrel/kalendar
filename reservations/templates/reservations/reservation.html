@@ -1,0 +1,30 @@
+{% extends "reservations/base.html" %}
+
+{% load staticfiles %}
+
+{% block title %}
+	{{ title }}
+{% endblock %}
+
+{% block menu %}
+{% endblock %}
+
+{% block content %}
+<script type="text/javascript">
+function confirm_alert(node) {
+	return confirm("Are you sure you want to delete this reservation? All the data connected to it will be deleted from the database.");
+}
+</script>
+<h2>Reservation</h2>
+<br/>
+<table class="tabela-reservation">
+	<tr><th>Reservation Date</th><td><br/>{{ reservation.date_reserved|date:"M d, Y" }}<br/>{{ reservation.date_reserved|time:"H:i" }}</td></tr>
+	<tr><th>Title</th><td>{{ reservation.title }}</td></tr>
+	<tr><th>Created On</th><td>{{ reservation.date_created }}</td></tr>
+	<tr><th>Confirmed</th><td>{{ reservation.confirmed }}</td></tr>
+	<tr>
+		<td id='uredi'><a href="{% url 'delete-reservation' reservation.id %} onclick='return confirm_alert(this);">Delete</a></td>
+		<td id='uredi'><a href="{% 'edit-reservation' reservation.id %}"><img src="{% static 'img/edit.png' %}" /></a></td>
+	</tr>
+</table>
+{% endblock %}

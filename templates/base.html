@@ -1,0 +1,27 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>
+			{% block title %}{% endblock %}
+		</title>
+		<link type="text/css" rel="stylesheet" href="{% static 'css/style.css' %}" />
+	</head>
+<body>
+	<div class="menu">
+		<img id='logo' src="{% static 'img/logo.png' %}" />
+		<ul>
+			<li><a href="/">Home</a></li>
+			<li><a href="/reservations">Reservations</a></li>
+			{% block menu %}{% endblock %} 
+		</ul>
+	</div>
+	<div class="content">
+		{% block content %}{% endblock %}
+	</div>
+	<div class="footer">
+		<span id='footer-txt'>Reservations, ©2015</span>
+	</div>
+</body>
+</html>

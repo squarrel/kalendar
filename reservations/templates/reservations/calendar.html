@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}
+	{{ title }}
+{% endblock %}
+
+{% block menu %}
+{% endblock %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+<br/>
+<div class='kalendar'>
+	{% reservation_calendar year month reservation_list %}
+</div>
+<br/>
+<table border="0px" width="100%">
+	<tr>
+		<td width="20%" align="left">
+			&lt; <a href="{% url 'calendar' previous_year previous_month %}">{{ previous_month_name }} {{ previous_year }}</a>
+		</td>
+		
+		<td width="20%" align="center"><a href="{% url 'this_month' %}">Today</a></td>
+		
+		<td width="20%" align="right">
+			<a href="{% url 'calendar' next_year next_month %}">{{ next_month_name }} {{ next_year }}</a> &gt;
+		</td>
+	</tr>
+	<tr>
+		<td width="50%" align="left">
+			&lt;&lt; <a href="{% url 'calendar' year_before_this month %}">{{ year_before_this }}</a>
+		</td>
+		<td></td>
+		<td width="50%" align="right">
+			<a href="{% url 'calendar' year_after_this month %}">{{ year_after_this }}</a> &gt;&gt;
+		</td>
+	</tr>
+</table>
+<br/>
+{% endblock %}
