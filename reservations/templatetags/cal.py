@@ -56,17 +56,17 @@ class ReservationCalendar(HTMLCalendar):
 				body = ['<ul>']
 				print("day", day)
 				for reservation in self.reservations[day]:
-					print("reservation.date_reserved:", reservation.date_reserved)
-					print("reservation.confirmed:", reservation.confirmed)
+					#print("reservation.date_reserved:", reservation.date_reserved)
+					#print("reservation.confirmed:", reservation.confirmed)
 					body.append('<li>')
 					if reservation.confirmed:
 						body.append('<a id="confirmed" href="%s">' % reverse('reservation', args=[reservation.id]))
 					else:
 						body.append('<a href="%s">' % reverse('reservation', args=[reservation.id]))
-					body.append(esc(reservation.date_reserved.strftime("%Y/%m/%d")))
+					body.append(esc(reservation.title))
 					body.append('</a></li>')
 				body.append('</ul>')
-				print("body", body)
+				#print("body", body)
 				return self.day_cell(cssclass, '<span class="day-number">%d</span> %s' % (day, ''.join(body)))
 			return self.day_cell(cssclass, '<span class="day-number-no-reservation">%d</span>' % (day))
 		return self.day_cell('noday', '&nbsp;')
@@ -88,8 +88,8 @@ class ReservationCalendar(HTMLCalendar):
 			day = days[i]
 			reservation = reservation_objects[i]
 			gr.setdefault(day, []).append(reservation)
-			print("d, reservation: ", day, reservation.id)
-		print("gr: ", gr.items())
+			#print("d, reservation: ", day, reservation.id)
+		#print("gr: ", gr.items())
 		return gr
 
 
