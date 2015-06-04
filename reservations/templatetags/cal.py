@@ -54,7 +54,7 @@ class ReservationCalendar(HTMLCalendar):
 			if day in self.reservations:
 				cssclass += ' filled'
 				body = ['<ul>']
-				print("day", day)
+				#print("day", day)
 				for reservation in self.reservations[day]:
 					#print("reservation.date_reserved:", reservation.date_reserved)
 					#print("reservation.confirmed:", reservation.confirmed)
