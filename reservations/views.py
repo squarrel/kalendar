@@ -1,9 +1,11 @@
 from django.shortcuts import render, render_to_response, \
 	get_object_or_404, get_list_or_404
+from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.contrib import auth
 from django.core.context_processors import csrf
 
 from reservations.models import Reservation
+from reservations.forms import ReservationForm
 
 import time
 from datetime import date, datetime
@@ -36,15 +38,53 @@ def reservation(request, reservation_id):
 
 
 def make_reservation(request):
-	pass
+	form = ReservationForm(request.POST)
+	if form.is_valid(): # else what?
+		form.save()
+		return HttpResponseRedirect(reverse('reservations'))
+	else:
+		form = ReservationForm()
+	args = {}
+	args.update(csrf(request))
+	args['form'] = form
+	return render(request, 'reservations/make_reservation.html', args)
 
 
 def edit_reservation(request, reservation_id):
-	pass
+	if request.POST:
+		if Reservation.objects.filter(pk=reservation_id).exists():
+			instance = Reservation.objects.get(pk=reservation_id)
+			form = ReservationForm(request.POST, instance=instance)
+			if form.is_valid():
+				form.save()
+				return HttpResponseRedirect(reverse('reservations',
+													reservation_id))
+		else:
+			return HttpResponseNotFound(
+										'<h2>Reservation Not Found</h2>'
+										)
+	else:
+		if Reservation.objects.filter(pk=reservation_id).exists():
+			instance = Reservation.objects.get(pk=reservation_id)
+			form = ReservationForm(instance=instance)
+		else:
+			return HttpResponseNotFound(
+										'<h2>Reservation Not Found</h2>'
+										)
+	args = {}
+	args['form'] = form
+	args['reservation_id'] = reservation_id
+	return render(request, 'reservations/edit_reservation.html', args)
 
 
 def delete_reservation(request, reservation_id):
-	pass
+	if Reservation.objects.filter(pk=reservation_id).exists():
+		Reservation.objects.filter(pk=reservation_id).delete()
+	else:
+		return HttpResponseNotFound(
+									'<h2>Reservation Not Found</h2>'
+									)
+	return HttpResponseRedirect(reverse('reservations'))
 
 
 def named_month(month_number):
