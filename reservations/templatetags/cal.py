@@ -8,12 +8,14 @@ from django.utils.html import conditional_escape as esc
 
 register = template.Library()
 
+
 def do_reservations_calendar(parser, token):
 	try:
 		tag_name, year, month, reservations_list = token.split_contents()
 	except ValueError:
 		raise template.TemplateSyntaxError("%r tag requires three arguments" % token.contents.split()[0])
-	return ReservationCalendarNode(year, month, reservation_list)
+	return ReservationCalendarNode(year, month, reservations_list)
+
 
 class ReservationCalendarNode(template.Node):
 	def __init__(self, year, month, reservation_list):
@@ -24,22 +26,25 @@ class ReservationCalendarNode(template.Node):
 		except ValueError:
 			raise template.TemplateSyntaxError
 
+
 	def render(self, context):
 		try:
 			my_reservation_list = self.reservation_list.resolve(context)
 			my_year = self.year.resolve(context)
 			my_month = self.month.resolve(context)
 			cal = ReservationCalendar(my_reservation_list)
-			return = cal.format_month(int(my_year), int(my_month))
+			return cal.format_month(int(my_year), int(my_month))
 		except ValueError:
 			return
 		except template.VariableDoesNotExist:
 			return
 
+
 class ReservationCalendar(HTMLCalendar):
 	def __init__(self, reservations):
 		super(ReservationCalendar, self).__init__()
 		self.reservations = self.group_by_day(reservations)
+
 
 	def format_day(self, day, weekday):
 		if day != 0:
@@ -66,9 +71,11 @@ class ReservationCalendar(HTMLCalendar):
 			return self.day_cell(cssclass, '<span class="day_number_no_reservation">%d</span>' % (day))
 		return self.day_cell('noday', '&nbsp;')
 
+
 	def format_month(self, year, month):
 		self.year, self.month = year, month
 		return super(ReservationCalendar, self).format_month(year, month)
+
 
 	def group_by_day(self, reservations):
 		days = []
@@ -83,5 +90,8 @@ class ReservationCalendar(HTMLCalendar):
 			gr.setdefault(day, []).append(book)
 		return gr
 
+
 	def day_cell(self, cssclass, body):
 		return '<td class="%s">%s</td>' % (cssclass, body)
+
+register.tag("reservations_calendar", do_reservations_calendar)

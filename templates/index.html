@@ -21,7 +21,7 @@
 	</tr>
 	{% for reservation in reservations %}
 	<tr>
-		<td>{{ reservation.date_created }}</td>
+		<td>{{ reservation.date_reserved|date:"M d Y" }}, {{ reservation.date_reserved|time:"H:i" }}</td>
 		<td><a href="{% url 'reservations.views.reservation' reservation.id %}">{{ reservation.title }}</a></td>
 	</tr>
 	{% endfor %}

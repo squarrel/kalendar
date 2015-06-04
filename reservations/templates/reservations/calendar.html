@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load cal %}
 
 {% block title %}
 	{{ title }}
@@ -11,7 +12,7 @@
 <h1>{{ title }}</h1>
 <br/>
 <div class='kalendar'>
-	{% reservation_calendar year month reservation_list %}
+	{% reservations_calendar year month reservations_list %}
 </div>
 <br/>
 <table border="0px" width="100%">
@@ -19,7 +20,6 @@
 		<td width="20%" align="left">
 			&lt; <a href="{% url 'calendar' previous_year previous_month %}">{{ previous_month_name }} {{ previous_year }}</a>
 		</td>
-		
 		<td width="20%" align="center"><a href="{% url 'this_month' %}">Today</a></td>
 		
 		<td width="20%" align="right">

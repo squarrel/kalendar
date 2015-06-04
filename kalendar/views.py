@@ -10,7 +10,7 @@ TITLE = 'Home'
 
 def index(request):
 	if Reservation.objects.all().exists():
-		reservations = Reservations.objects.all()\
+		reservations = Reservation.objects.all()\
 									.order_by('-date_created')[:5]
 	else:
 		reservations = None

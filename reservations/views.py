@@ -3,6 +3,8 @@ from django.shortcuts import render, render_to_response, \
 from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.contrib import auth
 from django.core.context_processors import csrf
+from django.core.urlresolvers import reverse
+from django.utils import timezone
 
 from reservations.models import Reservation
 from reservations.forms import ReservationForm
@@ -19,7 +21,7 @@ MONTHS = MONTHS.split()
 
 def reservations(request):
 	if Reservation.objects.all().exists():
-		reservations = Reservations.objects.all().\
+		reservations = Reservation.objects.all().\
 			order_by('-date_created')
 	else:
 		reservations = None
@@ -38,10 +40,11 @@ def reservation(request, reservation_id):
 
 
 def make_reservation(request):
-	form = ReservationForm(request.POST)
-	if form.is_valid(): # else what?
-		form.save()
-		return HttpResponseRedirect(reverse('reservations'))
+	if request.POST:
+		form = ReservationForm(request.POST)
+		if form.is_valid():# else what?
+			form.save()
+			return HttpResponseRedirect(reverse('reservations'))
 	else:
 		form = ReservationForm()
 	args = {}
@@ -57,8 +60,8 @@ def edit_reservation(request, reservation_id):
 			form = ReservationForm(request.POST, instance=instance)
 			if form.is_valid():
 				form.save()
-				return HttpResponseRedirect(reverse('reservations',
-													reservation_id))
+				return HttpResponseRedirect(reverse('reservation',
+												args=(reservation_id,)))
 		else:
 			return HttpResponseNotFound(
 										'<h2>Reservation Not Found</h2>'
@@ -92,12 +95,12 @@ def named_month(month_number):
 	return date(1900, month_number, 1).strftime("%B")
 
 
-def this_month(request, reservation):
+def this_month(request):
 	today = timezone.now()
-	return calendar(request, reservation, today.year, today.month)
+	return calendar(request, today.year, today.month)
 
 
-def calendar(request, reservation, year, month):
+def calendar(request, year, month):
 	my_year = int(year)
 	my_month = int(month)
 	my_calendar_from_month = datetime(my_year, my_month, 1)
@@ -106,8 +109,7 @@ def calendar(request, reservation, year, month):
 									23, 59)
 	my_reservation_events = Reservation.objects.\
 		filter(date_reserved__gte=my_calendar_from_month).\
-		filter(date_reserved__lte=my_calendar_to_month).\
-		filter(reservation=reservation)
+		filter(date_reserved__lte=my_calendar_to_month)
 	my_previous_year = my_year
 	my_previous_month = my_month - 1
 	if my_previous_month == 0:
@@ -121,7 +123,6 @@ def calendar(request, reservation, year, month):
 	my_year_after_this = my_year + 1
 	my_year_before_this = my_year - 1
 	args = {}
-	args['reservation'] = reservation
 	args['reservation_list'] = my_reservation_events
 	args['month'] = my_month
 	args['month_name'] = named_month(my_month)
