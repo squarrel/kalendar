@@ -14,8 +14,8 @@ from datetime import date, datetime
 from calendar import monthrange
 
 TITLE = 'Reservations'
-MONTHS = "January February March April May June July August September \
-	October November December"
+MONTHS = 'January February March April May June July August September \
+	October November December'
 MONTHS = MONTHS.split()
 
 
@@ -110,6 +110,7 @@ def calendar(request, year, month):
 	my_reservation_events = Reservation.objects.\
 		filter(date_reserved__gte=my_calendar_from_month).\
 		filter(date_reserved__lte=my_calendar_to_month)
+	print("my_reservation_events", my_reservation_events)
 	my_previous_year = my_year
 	my_previous_month = my_month - 1
 	if my_previous_month == 0:
@@ -123,6 +124,7 @@ def calendar(request, year, month):
 	my_year_after_this = my_year + 1
 	my_year_before_this = my_year - 1
 	args = {}
+	args['title'] = TITLE
 	args['reservation_list'] = my_reservation_events
 	args['month'] = my_month
 	args['month_name'] = named_month(my_month)

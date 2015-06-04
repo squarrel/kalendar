@@ -46,7 +46,7 @@ class ReservationCalendar(HTMLCalendar):
 		self.reservations = self.group_by_day(reservations)
 
 
-	def format_day(self, day, weekday):
+	def formatday(self, day, weekday):
 		if day != 0:
 			cssclass = self.cssclasses[weekday]
 			if date.today() == date(self.year, self.month, day):
@@ -54,10 +54,10 @@ class ReservationCalendar(HTMLCalendar):
 			if day in self.reservations:
 				cssclass += ' filled'
 				body = ['<ul>']
-				#print(day)
+				print("day", day)
 				for reservation in self.reservations[day]:
 					print("reservation.date_reserved:", reservation.date_reserved)
-					#print("reservation.confirmed:", reservation.confirmed)
+					print("reservation.confirmed:", reservation.confirmed)
 					body.append('<li>')
 					if reservation.confirmed:
 						body.append('<a id="confirmed" href="%s">' % reverse('reservation', args=[reservation.id]))
@@ -66,7 +66,7 @@ class ReservationCalendar(HTMLCalendar):
 					body.append(esc(reservation.date_reserved.strftime("%Y/%m/%d")))
 					body.append('</a></li>')
 				body.append('</ul>')
-				#print(body)
+				print("body", body)
 				return self.day_cell(cssclass, '<span class="day-number">%d</span> %s' % (day, ''.join(body)))
 			return self.day_cell(cssclass, '<span class="day-number-no-reservation">%d</span>' % (day))
 		return self.day_cell('noday', '&nbsp;')
@@ -88,6 +88,8 @@ class ReservationCalendar(HTMLCalendar):
 			day = days[i]
 			reservation = reservation_objects[i]
 			gr.setdefault(day, []).append(reservation)
+			print("d, reservation: ", day, reservation.id)
+		print("gr: ", gr.items())
 		return gr
 
 
