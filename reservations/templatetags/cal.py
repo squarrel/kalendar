@@ -11,10 +11,10 @@ register = template.Library()
 
 def do_reservations_calendar(parser, token):
 	try:
-		tag_name, year, month, reservations_list = token.split_contents()
+		tag_name, year, month, reservation_list = token.split_contents()
 	except ValueError:
 		raise template.TemplateSyntaxError("%r tag requires three arguments" % token.contents.split()[0])
-	return ReservationCalendarNode(year, month, reservations_list)
+	return ReservationCalendarNode(year, month, reservation_list)
 
 
 class ReservationCalendarNode(template.Node):
@@ -33,7 +33,7 @@ class ReservationCalendarNode(template.Node):
 			my_year = self.year.resolve(context)
 			my_month = self.month.resolve(context)
 			cal = ReservationCalendar(my_reservation_list)
-			return cal.format_month(int(my_year), int(my_month))
+			return cal.formatmonth(int(my_year), int(my_month))
 		except ValueError:
 			return
 		except template.VariableDoesNotExist:
@@ -56,38 +56,38 @@ class ReservationCalendar(HTMLCalendar):
 				body = ['<ul>']
 				#print(day)
 				for reservation in self.reservations[day]:
-					#print("reservation.date_reserved:", reservation.date_reserved)
+					print("reservation.date_reserved:", reservation.date_reserved)
 					#print("reservation.confirmed:", reservation.confirmed)
 					body.append('<li>')
 					if reservation.confirmed:
-						body.append('<a id="confirmed" href="%s">' % reverse('reservation', args=[reesrvation.id]))
+						body.append('<a id="confirmed" href="%s">' % reverse('reservation', args=[reservation.id]))
 					else:
-						body.append('<a href="%s">' % reverse('reservation', args=[booking.id]))
+						body.append('<a href="%s">' % reverse('reservation', args=[reservation.id]))
 					body.append(esc(reservation.date_reserved.strftime("%Y/%m/%d")))
 					body.append('</a></li>')
 				body.append('</ul>')
 				#print(body)
-				return self.day_cell(cssclass, '<span class="day_number">%d</span> %s' % (day, ''.join(body)))
-			return self.day_cell(cssclass, '<span class="day_number_no_reservation">%d</span>' % (day))
+				return self.day_cell(cssclass, '<span class="day-number">%d</span> %s' % (day, ''.join(body)))
+			return self.day_cell(cssclass, '<span class="day-number-no-reservation">%d</span>' % (day))
 		return self.day_cell('noday', '&nbsp;')
 
 
-	def format_month(self, year, month):
+	def formatmonth(self, year, month):
 		self.year, self.month = year, month
-		return super(ReservationCalendar, self).format_month(year, month)
+		return super(ReservationCalendar, self).formatmonth(year, month)
 
 
 	def group_by_day(self, reservations):
 		days = []
 		reservation_objects = []
-		for reservation in reservations:
-			days.append(reservation.date_reserved.day)
-			reservation_objects.append(reservation)
+		for r in reservations:
+			days.append(r.date_reserved.day)
+			reservation_objects.append(r)
 		gr = {}
 		for i in range(len(days)):
 			day = days[i]
 			reservation = reservation_objects[i]
-			gr.setdefault(day, []).append(book)
+			gr.setdefault(day, []).append(reservation)
 		return gr
 
 
